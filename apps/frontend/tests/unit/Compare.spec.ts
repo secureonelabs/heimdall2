@@ -41,18 +41,18 @@ describe('Compare table data', () => {
   });
 
   it('search works when nothing fits criteria', () => {
-    (wrapper.vm as any).search_term = 'failed';
+    (wrapper.vm as any).searchTerm = 'failed';
     expect((wrapper.vm as any).show_sets.length).toBe(0);
   });
 
   it('search id works', () => {
     (wrapper.vm as any).checkbox = false;
-    (wrapper.vm as any).search_term = 'v-13613';
+    (wrapper.vm as any).searchTerm = 'v-13613';
     expect((wrapper.vm as any).show_sets.length).toBe(1);
   });
 
   it('does not recount same control with different data', () => {
-    (wrapper.vm as any).search_term = '';
+    (wrapper.vm as any).searchTerm = '';
     (wrapper.vm as any).checkbox = true;
     loadSample('NGINX Clean Sample');
     expect((wrapper.vm as any).control_sets.length).toBe(nginxControlCount);
@@ -64,13 +64,13 @@ describe('Compare table data', () => {
 
   it('search status works', () => {
     (wrapper.vm as any).checkbox = false;
-    (wrapper.vm as any).search_term = 'failed';
+    (wrapper.vm as any).searchTerm = 'failed';
     expect((wrapper.vm as any).show_sets.length).toBe(nginxDelta);
   });
 
   it('counts every unique control', () => {
     loadSample('Red Hat With Failing Tests');
-    (wrapper.vm as any).search_term = '';
+    (wrapper.vm as any).searchTerm = '';
     (wrapper.vm as any).checkbox = true;
     expect((wrapper.vm as any).control_sets.length).toBe(
       nginxControlCount + redHatControlCount
@@ -93,7 +93,7 @@ describe('Compare table data', () => {
     let nr = 0;
     let pe = 0;
     const selectedData = FilteredDataModule.evaluations(
-      FilteredDataModule.selected_file_ids
+      FilteredDataModule.selectedFileIds
     );
     const currDelta = new ComparisonContext(selectedData);
     for (const pairing of Object.values(currDelta.pairings)) {
@@ -115,25 +115,25 @@ describe('Compare table data', () => {
     }
     const expected = {
       Failed: StatusCountModule.hash({
-        omit_overlayed_controls: true,
-        fromFile: [...FilteredDataModule.selected_file_ids]
+        omitOverlayedControls: true,
+        fromFile: [...FilteredDataModule.selectedFileIds]
       }).Failed,
       Passed: StatusCountModule.hash({
-        omit_overlayed_controls: true,
-        fromFile: [...FilteredDataModule.selected_file_ids]
+        omitOverlayedControls: true,
+        fromFile: [...FilteredDataModule.selectedFileIds]
       }).Passed,
       'From Profile': 0,
       'Profile Error': StatusCountModule.hash({
-        omit_overlayed_controls: true,
-        fromFile: [...FilteredDataModule.selected_file_ids]
+        omitOverlayedControls: true,
+        fromFile: [...FilteredDataModule.selectedFileIds]
       })['Profile Error'],
       'Not Reviewed': StatusCountModule.hash({
-        omit_overlayed_controls: true,
-        fromFile: [...FilteredDataModule.selected_file_ids]
+        omitOverlayedControls: true,
+        fromFile: [...FilteredDataModule.selectedFileIds]
       })['Not Reviewed'],
       'Not Applicable': StatusCountModule.hash({
-        omit_overlayed_controls: true,
-        fromFile: [...FilteredDataModule.selected_file_ids]
+        omitOverlayedControls: true,
+        fromFile: [...FilteredDataModule.selectedFileIds]
       })['Not Applicable']
     };
     const actual = {
@@ -194,8 +194,8 @@ describe('compare charts', () => {
     loadSample('NGINX Clean Sample');
     expect(new Set((wrapper.vm as any).compliance_series[0].data)).toEqual(
       new Set([
-        fileCompliance(FilteredDataModule.selected_file_ids[0]),
-        fileCompliance(FilteredDataModule.selected_file_ids[1])
+        fileCompliance(FilteredDataModule.selectedFileIds[0]),
+        fileCompliance(FilteredDataModule.selectedFileIds[1])
       ])
     );
   });
@@ -206,8 +206,8 @@ describe('compare charts', () => {
     loadSample('Red Hat With Failing Tests');
     expect(new Set((wrapper.vm as any).compliance_series[0].data)).toEqual(
       new Set([
-        fileCompliance(FilteredDataModule.selected_file_ids[0]),
-        fileCompliance(FilteredDataModule.selected_file_ids[1])
+        fileCompliance(FilteredDataModule.selectedFileIds[0]),
+        fileCompliance(FilteredDataModule.selectedFileIds[1])
       ])
     );
   });
@@ -218,8 +218,8 @@ describe('compare charts', () => {
     loadSample('Acme Overlay Example');
     expect(new Set((wrapper.vm as any).compliance_series[0].data)).toEqual(
       new Set([
-        fileCompliance(FilteredDataModule.selected_file_ids[0]),
-        fileCompliance(FilteredDataModule.selected_file_ids[1])
+        fileCompliance(FilteredDataModule.selectedFileIds[0]),
+        fileCompliance(FilteredDataModule.selectedFileIds[1])
       ])
     );
   });

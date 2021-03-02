@@ -4,9 +4,9 @@
 
 import {
   Filter,
+  filterCacheKey,
   FilteredData,
-  FilteredDataModule,
-  filter_cache_key
+  FilteredDataModule
 } from '@/store/data_filters';
 import Store from '@/store/store';
 import {Severity} from 'inspecjs';
@@ -17,7 +17,7 @@ import {getModule, Module, VuexModule} from 'vuex-module-decorators';
 type SeverityHash = {[key in Severity]: number};
 
 // Helper function for counting a status in a list of controls
-function count_severities(data: FilteredData, filter: Filter): SeverityHash {
+function conntSeverities(data: FilteredData, filter: Filter): SeverityHash {
   // Remove the status filter from the control filter
   const new_filter: Filter = {
     status: undefined,
@@ -57,7 +57,7 @@ export class SeverityCount extends VuexModule {
     const cache: LRUCache<string, SeverityHash> = new LRUCache(30);
 
     return (filter: Filter) => {
-      const id = filter_cache_key(filter);
+      const id = filterCacheKey(filter);
       const cached = cache.get(id);
       // If cache hits, just return
       if (cached !== undefined) {
@@ -65,7 +65,7 @@ export class SeverityCount extends VuexModule {
       }
 
       // Elsewise, generate, cache, then return
-      const result = count_severities(FilteredDataModule, filter);
+      const result = conntSeverities(FilteredDataModule, filter);
       cache.set(id, result);
       return result;
     };

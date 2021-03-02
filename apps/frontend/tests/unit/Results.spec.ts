@@ -54,8 +54,8 @@ loadSample('Acme Overlay Example');
 describe('Profile Info', () => {
   it('shows correct number of files', () => {
     loadAll();
-    expect((wrapper.vm as any).file_filter.length).toBe(
-      FilteredDataModule.selected_file_ids.length
+    expect((wrapper.vm as any).filteFilter.length).toBe(
+      FilteredDataModule.selectedFileIds.length
     );
   });
 
@@ -69,7 +69,7 @@ describe('Profile Info', () => {
         $router
       },
       propsData: {
-        selected_prof: (wrapper.vm as any).root_profiles[0]
+        selected_prof: (wrapper.vm as any).rootProfiles[0]
       }
     });
 
@@ -86,7 +86,7 @@ describe('Profile Info', () => {
         $router
       },
       propsData: {
-        selected_prof: (wrapper.vm as any).root_profiles[0]
+        selected_prof: (wrapper.vm as any).rootProfiles[0]
       }
     });
 
@@ -109,7 +109,7 @@ describe('Profile Info', () => {
         $router
       },
       propsData: {
-        selected_prof: (wrapper.vm as any).root_profiles[0]
+        selected_prof: (wrapper.vm as any).rootProfiles[0]
       }
     });
 
@@ -152,7 +152,7 @@ describe('Profile Info', () => {
     ];
     (profInfoWrapper.vm as any).active = [];
     (profInfoWrapper.vm as any).child_active = [
-      profile_unique_key((wrapper.vm as any).visible_profiles[1])
+      profile_unique_key((wrapper.vm as any).visibleProfiles[1])
     ];
     expect((profInfoWrapper.vm as any).selected_info).toEqual(expected);
   });
@@ -168,7 +168,7 @@ describe('Datatable', () => {
         $router
       },
       propsData: {
-        filter: (wrapper.vm as any).all_filter,
+        filter: (wrapper.vm as any).allFilter,
         showImpact: true
       }
     });
@@ -188,8 +188,8 @@ describe('Datatable', () => {
         .sort()
     ).toEqual(
       FilteredDataModule.controls({
-        fromFile: FilteredDataModule.selected_file_ids,
-        omit_overlayed_controls: true
+        fromFile: FilteredDataModule.selectedFileIds,
+        omitOverlayedControls: true
       })
         .map((c) => c.data.id)
         .sort()

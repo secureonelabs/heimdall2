@@ -5,16 +5,16 @@
       :persistent="persistent"
       @close-modal="$emit('close-modal')"
     >
-      <v-banner v-if="warning_banner" icon="mdi-alert" color="warning">
-        {{ warning_banner }}
+      <v-banner v-if="warningBanner" icon="mdi-alert" color="warning">
+        {{ warningBanner }}
       </v-banner>
       <v-tabs
         :vertical="$vuetify.breakpoint.mdAndUp"
         active
-        :value="active_tab"
+        :value="activeTab"
         color="primary-visible"
         show-arrows
-        @change="selected_tab"
+        @change="selectedTab"
       >
         <v-tabs-slider />
         <!-- Define our tabs -->
@@ -37,23 +37,23 @@
 
         <!-- Include those components -->
         <v-tab-item value="uploadtab-local">
-          <FileReader @got-files="got_files" />
+          <FileReader @got-files="gotFiles" />
         </v-tab-item>
 
         <v-tab-item v-if="serverMode" value="uploadtab-database">
-          <DatabaseReader :refresh="visible" @got-files="got_files" />
+          <DatabaseReader :refresh="visible" @got-files="gotFiles" />
         </v-tab-item>
 
         <v-tab-item value="uploadtab-sample">
-          <SampleList @got-files="got_files" />
+          <SampleList @got-files="gotFiles" />
         </v-tab-item>
 
         <v-tab-item value="uploadtab-s3">
-          <S3Reader @got-files="got_files" />
+          <S3Reader @got-files="gotFiles" />
         </v-tab-item>
 
         <v-tab-item value="uploadtab-splunk">
-          <SplunkReader @got-files="got_files" />
+          <SplunkReader @got-files="gotFiles" />
         </v-tab-item>
       </v-tabs>
       <HelpFooter />
@@ -79,7 +79,7 @@ import {Prop} from 'vue-property-decorator';
 import {ServerModule} from '@/store/server';
 import {FilteredDataModule} from '@/store/data_filters';
 
-const local_tab = new LocalStorageVal<string>('nexus_curr_tab');
+const localTab = new LocalStorageVal<string>('nexus_curr_tab');
 
 /**
  * Multiplexes all of our file upload components
@@ -100,21 +100,21 @@ export default class UploadNexus extends mixins(ServerMixin, RouteMixin) {
   @Prop({default: true}) readonly visible!: boolean;
   @Prop({default: false}) readonly persistent!: boolean;
 
-  active_tab: string = local_tab.get_default('uploadtab-local');
+  activeTab: string = localTab.get_default('uploadtab-local');
 
   // Handles change in tab
-  selected_tab(new_tab: string) {
-    this.active_tab = new_tab;
+  selectedTab(newTab: string) {
+    this.activeTab = newTab;
     SnackbarModule.visibility(false);
-    local_tab.set(new_tab);
+    localTab.set(newTab);
   }
 
-  get warning_banner(): string {
+  get warningBanner(): string {
     return ServerModule.banner;
   }
 
   // Event passthrough
-  got_files(files: FileID[]) {
+  gotFiles(files: FileID[]) {
     this.$emit('got-files', files);
 
     let numEvaluations = FilteredDataModule.selectedEvaluationIds.filter(

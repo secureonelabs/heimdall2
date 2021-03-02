@@ -4,7 +4,7 @@
 
 import {InspecDataModule} from '@/store/data_store';
 import Store from '@/store/store';
-import {Tag} from '@/types/models.ts';
+import {Tag} from '@/types/models';
 import {read_file_async} from '@/utilities/async_util';
 import {context, parse} from 'inspecjs';
 import {v4 as uuid} from 'uuid';
@@ -38,12 +38,12 @@ export type InspecFile = {
 /** Modify our contextual types to sort of have back-linking to sourced from files */
 export interface SourcedContextualizedEvaluation
   extends context.ContextualizedEvaluation {
-  from_file: EvaluationFile;
+  fromFile: EvaluationFile;
 }
 
 export interface SourcedContextualizedProfile
   extends context.ContextualizedProfile {
-  from_file: ProfileFile;
+  fromFile: ProfileFile;
 }
 
 /** Represents a file containing an Inspec Execution output */
@@ -106,7 +106,7 @@ export class InspecIntake extends VuexModule {
     // Determine what sort of file we (hopefully) have, then add it
     if (result['1_0_ExecJson']) {
       // A bit of chicken and egg here
-      const eval_file = {
+      const evalFile = {
         unique_id: fileID,
         filename: options.filename,
         database_id: options.database_id,
@@ -120,16 +120,16 @@ export class InspecIntake extends VuexModule {
       const evaluation = (context.contextualizeEvaluation(
         result['1_0_ExecJson']
       ) as unknown) as SourcedContextualizedEvaluation;
-      evaluation.from_file = eval_file;
+      evaluation.fromFile = evalFile;
 
       // Set and freeze
-      eval_file.evaluation = evaluation;
+      evalFile.evaluation = evaluation;
       Object.freeze(evaluation);
-      InspecDataModule.addExecution(eval_file);
-      FilteredDataModule.toggle_evaluation(eval_file.unique_id);
+      InspecDataModule.addExecution(evalFile);
+      FilteredDataModule.toggle_evaluation(evalFile.unique_id);
     } else if (result['1_0_ProfileJson']) {
       // Handle as profile
-      const profile_file = {
+      const profileFile = {
         unique_id: fileID,
         filename: options.filename
       } as ProfileFile;
@@ -138,13 +138,13 @@ export class InspecIntake extends VuexModule {
       const profile = (context.contextualizeProfile(
         result['1_0_ProfileJson']
       ) as unknown) as SourcedContextualizedProfile;
-      profile.from_file = profile_file;
+      profile.fromFile = profileFile;
 
       // Set and freeze
-      profile_file.profile = profile;
+      profileFile.profile = profile;
       Object.freeze(profile);
-      InspecDataModule.addProfile(profile_file);
-      FilteredDataModule.toggle_profile(profile_file.unique_id);
+      InspecDataModule.addProfile(profileFile);
+      FilteredDataModule.toggleProfile(profileFile.unique_id);
     } else {
       throw new Error("Couldn't parse data");
     }

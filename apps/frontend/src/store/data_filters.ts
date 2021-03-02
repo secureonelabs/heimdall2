@@ -32,7 +32,7 @@ export interface Filter {
   severity?: Severity;
 
   /** Whether or not to allow/include overlayed controls */
-  omit_overlayed_controls?: boolean;
+  omitOverlayedControls?: boolean;
 
   /** A search term string, case insensitive
    * We look for this in
@@ -43,13 +43,13 @@ export interface Filter {
    * - finding details (from HDF)
    * - code
    */
-  search_term?: string;
+  searchTerm?: string;
 
   /** The current state of the Nist Treemap. Used to further filter by nist categories etc. */
-  tree_filters?: TreeMapState;
+  treeFilters?: TreeMapState;
 
   /** A specific control id */
-  control_id?: string;
+  controlId?: string;
 }
 
 export type TreeMapState = string[]; // Representing the current path spec, from root
@@ -127,8 +127,8 @@ export class FilteredData extends VuexModule {
   }
 
   @Action
-  public toggle_all_evaluations(): void {
-    if (this.all_evaluations_selected === Trinary.On) {
+  public toggleAllEvaluations(): void {
+    if (this.allEvaluationsSelected === Trinary.On) {
       this.CLEAR_ALL_EVALUATIONS();
     } else {
       this.SELECT_EVALUATIONS(
@@ -138,8 +138,8 @@ export class FilteredData extends VuexModule {
   }
 
   @Action
-  public toggle_all_profiles(): void {
-    if (this.all_profiles_selected === Trinary.On) {
+  public toggleAllProfiles(): void {
+    if (this.allProfilesSelected === Trinary.On) {
       this.CLEAR_ALL_PROFILES();
     } else {
       this.SELECT_PROFILES(
@@ -170,7 +170,7 @@ export class FilteredData extends VuexModule {
   }
 
   @Action
-  public toggle_profile(fileID: FileID): void {
+  public toggleProfile(fileID: FileID): void {
     if (this.selectedProfileIds.includes(fileID)) {
       this.CLEAR_PROFILE(fileID);
     } else {
@@ -193,7 +193,7 @@ export class FilteredData extends VuexModule {
   ) => readonly SourcedContextualizedEvaluation[] {
     return (files: FileID[]) => {
       return InspecDataModule.contextualExecutions.filter((e) =>
-        files.includes(e.from_file.unique_id)
+        files.includes(e.fromFile.unique_id)
       );
     };
   }
@@ -213,13 +213,13 @@ export class FilteredData extends VuexModule {
       // Filter to those that match our filter. In this case that just means come from the right file id
       InspecDataModule.contextualProfiles.forEach((prof) => {
         if (isFromProfileFile(prof)) {
-          if (files.includes(prof.from_file.unique_id)) {
+          if (files.includes(prof.fromFile.unique_id)) {
             profiles.push(prof);
           }
         } else {
           // Its a report; go two levels up to get its file
           const ev = prof.sourced_from as SourcedContextualizedEvaluation;
-          if (files.includes(ev.from_file.unique_id)) {
+          if (files.includes(ev.fromFile.unique_id)) {
             profiles.push(prof);
           }
         }
@@ -230,7 +230,7 @@ export class FilteredData extends VuexModule {
   }
 
   /* get the currently select evaluations */
-  get selected_evaluations(): string[] {
+  get selectedEvaluations(): string[] {
     const fileIds = [...this.selectedEvaluationIds];
     const files = InspecDataModule.allProfileFiles;
 
@@ -240,7 +240,7 @@ export class FilteredData extends VuexModule {
   }
 
   /* get the currently selected profiles */
-  get selected_profiles(): string[] {
+  get selectedProfiles(): string[] {
     const fileIds = [...this.selectedProfileIds];
     const files = InspecDataModule.allEvaluationFiles;
 
@@ -249,13 +249,13 @@ export class FilteredData extends VuexModule {
     );
   }
 
-  get selected_file_ids(): FileID[] {
+  get selectedFileIds(): FileID[] {
     return [...this.selectedEvaluationIds, ...this.selectedProfileIds];
   }
 
   // check to see if all profiles are selected
-  get all_profiles_selected(): Trinary {
-    switch (this.selected_profiles.length) {
+  get allProfilesSelected(): Trinary {
+    switch (this.selectedProfiles.length) {
       case 0:
         return Trinary.Off;
       case InspecDataModule.allProfileFiles.length:
@@ -266,8 +266,8 @@ export class FilteredData extends VuexModule {
   }
 
   // check to see if all evaluations are selected
-  get all_evaluations_selected(): Trinary {
-    switch (this.selected_evaluations.length) {
+  get allEvaluationsSelected(): Trinary {
+    switch (this.selectedEvaluations.length) {
       case 0:
         return Trinary.Off;
       case InspecDataModule.allEvaluationFiles.length:
@@ -291,8 +291,8 @@ export class FilteredData extends VuexModule {
 
     return (filter: Filter) => {
       // Generate a hash for cache purposes.
-      // If the "search_term" string is not null, we don't cache - no need to pollute
-      const id: string = filter_cache_key(filter);
+      // If the "searchTerm" string is not null, we don't cache - no need to pollute
+      const id: string = filterCacheKey(filter);
 
       // Check if we have this cached:
       const cached = localCache.get(id);
@@ -310,8 +310,8 @@ export class FilteredData extends VuexModule {
       controls = profiles.flatMap((profile) => profile.contains);
 
       // Filter by control id
-      if (filter.control_id !== undefined) {
-        controls = controls.filter((c) => c.data.id === filter.control_id);
+      if (filter.controlId !== undefined) {
+        controls = controls.filter((c) => c.data.id === filter.controlId);
       }
 
       // Filter by status, if necessary
@@ -329,24 +329,24 @@ export class FilteredData extends VuexModule {
       }
 
       // Filter by overlay
-      if (filter.omit_overlayed_controls) {
+      if (filter.omitOverlayedControls) {
         controls = controls.filter(
           (control) => control.extended_by.length === 0
         );
       }
 
       // Filter by search term
-      if (filter.search_term !== undefined) {
-        const term = filter.search_term.toLowerCase();
+      if (filter.searchTerm !== undefined) {
+        const term = filter.searchTerm.toLowerCase();
 
         // Filter controls to those that contain search term
         controls = controls.filter((c) => contains_term(c, term));
       }
 
       // Filter by nist stuff
-      if (filter.tree_filters && filter.tree_filters.length > 0) {
+      if (filter.treeFilters && filter.treeFilters.length > 0) {
         // Construct a nist control to represent the filter
-        const control = new nist.NistControl(filter.tree_filters);
+        const control = new nist.NistControl(filter.treeFilters);
 
         controls = controls.filter((c) => {
           // Get an hdf version so we have the fixed nist tags
@@ -368,20 +368,20 @@ export const FilteredDataModule = getModule(FilteredData);
  * Generates a unique string to represent a filter.
  * Does some minor "acceleration" techniques such as
  * - annihilating empty search terms
- * - defaulting "omit_overlayed_controls"
+ * - defaulting "omitOverlayedControls"
  */
-export function filter_cache_key(f: Filter) {
+export function filterCacheKey(f: Filter) {
   // fix the search term
-  let new_search: string;
-  if (f.search_term !== undefined) {
-    new_search = f.search_term.trim();
+  let newSearch: string;
+  if (f.searchTerm !== undefined) {
+    newSearch = f.searchTerm.trim();
   } else {
-    new_search = '';
+    newSearch = '';
   }
 
   const newFilter: Filter = {
-    search_term: new_search,
-    omit_overlayed_controls: f.omit_overlayed_controls || false,
+    searchTerm: newSearch,
+    omitOverlayedControls: f.omitOverlayedControls || false,
     ...f
   };
   return JSON.stringify(newFilter);

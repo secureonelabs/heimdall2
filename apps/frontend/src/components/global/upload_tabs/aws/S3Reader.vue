@@ -31,7 +31,7 @@
       :auth="assumed_role"
       :files="files"
       @exit-list="handle_cancel_mfa"
-      @got-files="got_files"
+      @got-files="gotFiles"
       @load-bucket="load_bucket"
     />
   </v-stepper>
@@ -213,7 +213,7 @@ export default class S3Reader extends Vue {
   }
 
   /** Callback on got files */
-  got_files(files: Array<FileID>) {
+  gotFiles(files: Array<FileID>) {
     this.$emit('got-files', files);
   }
 }

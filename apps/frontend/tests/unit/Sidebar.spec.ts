@@ -33,27 +33,27 @@ describe('Sidebar tests', () => {
 
   it('displays properly when select/deselect is clicked', () => {
     // deselect all profiles and evaluations
-    (wrapper.vm as any).toggle_all_profiles();
-    (wrapper.vm as any).toggle_all_evaluations();
-    expect(FilteredDataModule.selected_file_ids).toEqual([]);
+    (wrapper.vm as any).toggleAllProfiles();
+    (wrapper.vm as any).toggleAllEvaluations();
+    expect(FilteredDataModule.selectedFileIds).toEqual([]);
 
     // select all profiles and evaluations
-    (wrapper.vm as any).toggle_all_profiles();
-    (wrapper.vm as any).toggle_all_evaluations();
-    expect(FilteredDataModule.selected_file_ids.length).toEqual(
+    (wrapper.vm as any).toggleAllProfiles();
+    (wrapper.vm as any).toggleAllEvaluations();
+    expect(FilteredDataModule.selectedFileIds.length).toEqual(
       InspecDataModule.allFiles.length
     );
 
     // select profiles only
-    (wrapper.vm as any).toggle_all_evaluations();
-    expect(FilteredDataModule.selected_file_ids.length).toEqual(
+    (wrapper.vm as any).toggleAllEvaluations();
+    expect(FilteredDataModule.selectedFileIds.length).toEqual(
       InspecDataModule.allProfileFiles.length
     );
 
     // select evaluations only
-    (wrapper.vm as any).toggle_all_profiles();
-    (wrapper.vm as any).toggle_all_evaluations();
-    expect(FilteredDataModule.selected_file_ids.length).toEqual(
+    (wrapper.vm as any).toggleAllProfiles();
+    (wrapper.vm as any).toggleAllEvaluations();
+    expect(FilteredDataModule.selectedFileIds.length).toEqual(
       InspecDataModule.allEvaluationFiles.length
     );
   });

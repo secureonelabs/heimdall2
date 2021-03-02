@@ -1,11 +1,11 @@
 <template>
-  <BaseView :title="curr_title">
+  <BaseView :title="currTitle">
     <!-- Topbar content - give it a search bar -->
     <template #topbar-content>
       <v-text-field
-        v-show="show_search_mobile || !$vuetify.breakpoint.xs"
+        v-show="showSearchMobile || !$vuetify.breakpoint.xs"
         ref="search"
-        v-model="search_term"
+        v-model="searchTerm"
         flat
         hide-details
         solo
@@ -13,13 +13,13 @@
         label="Search"
         clearable
         :class="$vuetify.breakpoint.xs ? 'overtake-bar mx-2' : 'mx-2'"
-        @click:clear="clear_search()"
-        @blur="show_search_mobile = false"
+        @click:clear="clearSearch()"
+        @blur="showSearchMobile = false"
       />
       <v-btn v-if="$vuetify.breakpoint.xs" class="mr-2" @click="showSearch">
         <v-icon>mdi-magnify</v-icon>
       </v-btn>
-      <v-btn :disabled="!can_clear" @click="clear">
+      <v-btn :disabled="!canClear" @click="clear">
         <span class="d-none d-md-inline pr-2"> Clear </span>
         <v-icon>mdi-filter-remove</v-icon>
       </v-btn>
@@ -34,10 +34,10 @@
           </template>
           <v-list class="py-0">
             <v-list-item class="px-0">
-              <ExportCaat :filter="all_filter" />
+              <ExportCaat :filter="allFilter" />
             </v-list-item>
             <v-list-item class="px-0">
-              <ExportNist :filter="all_filter" />
+              <ExportNist :filter="allFilter" />
             </v-list-item>
             <v-list-item class="px-0">
               <ExportJson />
@@ -52,20 +52,20 @@
       <v-container fluid grid-list-md pa-2>
         <!-- Evaluation Info -->
         <v-row>
-          <v-col v-if="file_filter.length > 3">
-            <v-slide-group v-model="eval_info" show-arrows>
+          <v-col v-if="filteFilter.length > 3">
+            <v-slide-group v-model="evalInfo" show-arrows>
               <v-slide-item
-                v-for="(file, i) in file_filter"
+                v-for="(file, i) in filteFilter"
                 :key="i"
                 v-slot="{toggle}"
                 class="mx-2"
               >
                 <v-card
-                  :width="info_width"
+                  :width="infoWidth"
                   data-cy="profileInfo"
                   @click="toggle"
                 >
-                  <EvaluationInfo :file_filter="file" />
+                  <EvaluationInfo :filte-filter="file" />
                   <v-card-subtitle style="text-align: right">
                     Profile Info ↓
                   </v-card-subtitle>
@@ -73,38 +73,38 @@
               </v-slide-item>
             </v-slide-group>
             <ProfileData
-              v-if="eval_info != null"
+              v-if="evalInfo != null"
               class="my-4 mx-10"
               :selected_prof="
-                root_profiles[prof_ids.indexOf(file_filter[eval_info])]
+                rootProfiles[profIds.indexOf(filteFilter[evalInfo])]
               "
             />
           </v-col>
           <v-col
-            v-for="(file, i) in file_filter"
+            v-for="(file, i) in filteFilter"
             v-else
             :key="i"
-            :cols="12 / file_filter.length"
+            :cols="12 / filteFilter.length"
           >
-            <v-card data-cy="profileInfo" @click="toggle_prof(i)">
-              <EvaluationInfo :file_filter="file" />
+            <v-card data-cy="profileInfo" @click="toggleProf(i)">
+              <EvaluationInfo :filte-filter="file" />
               <v-card-subtitle style="text-align: right">
                 Profile Info ↓
               </v-card-subtitle>
             </v-card>
           </v-col>
           <ProfileData
-            v-if="eval_info != null && file_filter.length <= 3"
+            v-if="evalInfo != null && filteFilter.length <= 3"
             class="my-4 mx-10"
             :selected_prof="
-              root_profiles[prof_ids.indexOf(file_filter[eval_info])]
+              rootProfiles[profIds.indexOf(filteFilter[evalInfo])]
             "
           />
         </v-row>
         <!-- Count Cards -->
         <StatusCardRow
-          :filter="all_filter"
-          @show-errors="status_filter = 'Profile Error'"
+          :filter="allFilter"
+          @show-errors="statusFilter = 'Profile Error'"
         />
         <!-- Compliance Cards -->
         <v-row justify="space-around">
@@ -112,7 +112,7 @@
             <v-card class="fill-height">
               <v-card-title class="justify-center">Status Counts</v-card-title>
               <v-card-actions class="justify-center">
-                <StatusChart v-model="status_filter" :filter="all_filter" />
+                <StatusChart v-model="statusFilter" :filter="allFilter" />
               </v-card-actions>
             </v-card>
           </v-col>
@@ -122,7 +122,7 @@
                 >Severity Counts</v-card-title
               >
               <v-card-actions class="justify-center">
-                <SeverityChart v-model="severity_filter" :filter="all_filter" />
+                <SeverityChart v-model="severityFilter" :filter="allFilter" />
               </v-card-actions>
             </v-card>
           </v-col>
@@ -132,7 +132,7 @@
                 >Compliance Level</v-card-title
               >
               <v-card-actions class="justify-center">
-                <ComplianceChart :filter="all_filter" />
+                <ComplianceChart :filter="allFilter" />
               </v-card-actions>
               <v-card-text style="text-align: center"
                 >[Passed/(Passed + Failed + Not Reviewed + Profile Error) *
@@ -149,9 +149,9 @@
               <v-card-title>TreeMap</v-card-title>
               <v-card-text>
                 <Treemap
-                  v-model="tree_filters"
-                  :filter="treemap_full_filter"
-                  :selected_control.sync="control_selection"
+                  v-model="treeFilters"
+                  :filter="treeMapFullFilter"
+                  :selected_control.sync="controlSelection"
                 />
               </v-card-text>
             </v-card>
@@ -164,8 +164,8 @@
             <v-card elevation="2">
               <ControlTable
                 ref="controlTable"
-                :filter="all_filter"
-                :show-impact="is_result_view"
+                :filter="allFilter"
+                :show-impact="isResultView"
               />
             </v-card>
           </v-col>
@@ -175,19 +175,19 @@
 
     <!-- Everything-is-filtered snackbar -->
     <v-snackbar
-      v-model="filter_snackbar"
+      v-model="filterSnackbar"
       class="mt-11"
       style="z-index: 2"
       :timeout="-1"
       color="warning"
       top
     >
-      <span v-if="file_filter.length" class="subtitle-2">
+      <span v-if="filteFilter.length" class="subtitle-2">
         All results are filtered out. Use the
         <v-icon>mdi-filter-remove</v-icon> button in the top right to clear
         filters and show all.
       </span>
-      <span v-else-if="no_files" class="subtitle-2">
+      <span v-else-if="noFiles" class="subtitle-2">
         No files are currently loaded. Press the <strong>LOAD</strong>
         <v-icon class="mx-1"> mdi-cloud-upload</v-icon> button above to load
         some.
@@ -255,54 +255,54 @@ export default class Results extends Vue {
   /**
    * The currently selected severity, as modeled by the severity chart
    */
-  severity_filter: Severity | null = null;
+  severityFilter: Severity | null = null;
 
   /**
    * The currently selected status, as modeled by the status chart
    */
-  status_filter: ControlStatus | null = null;
+  statusFilter: ControlStatus | null = null;
 
   /**
-   * The current state of the treemap as modeled by the treemap (duh).
+   * The current state of the treemap as modeled by the treemap.
    * Once can reliably expect that if a "deep" selection is not null, then its parent should also be not-null.
    */
-  tree_filters: TreeMapState = [];
-  control_selection: string | null = null;
+  treeFilters: TreeMapState = [];
+  controlSelection: string | null = null;
 
   /**
    * The current search term, as modeled by the search bar
    * Never empty - should in that case be null
    */
-  search_term: string = '';
+  searchTerm = '';
 
   /** Model for if all-filtered snackbar should be showing */
-  filter_snackbar: boolean = false;
+  filterSnackbar = false;
 
-  eval_info: number | null = null;
+  evalInfo: number | null = null;
 
   /** Determines if we should make the search bar colapseable */
-  show_search_mobile: boolean = false;
+  showSearchMobile: boolean = false;
 
   /**
    * The currently selected file, if one exists.
    * Controlled by router.
    */
-  get file_filter(): FileID[] {
-    if (this.is_result_view)
-      return FilteredDataModule.selected_evaluations;
-    else return FilteredDataModule.selected_profiles;
+  get filteFilter(): FileID[] {
+    if (this.isResultView)
+      return FilteredDataModule.selectedEvaluations;
+    else return FilteredDataModule.selectedProfiles;
   }
 
   /**
    * Returns true if we're showing results
    */
 
-  get is_result_view(): boolean {
-    return this.current_route_name === 'results';
+  get isResultView(): boolean {
+    return this.currentRouteName === 'results';
   }
 
   // Returns true if no files are uploaded
-  get no_files(): boolean {
+  get noFiles(): boolean {
     return InspecDataModule.allFiles.length === 0;
   }
 
@@ -310,7 +310,7 @@ export default class Results extends Vue {
    * Handles focusing on the search bar
    */
   showSearch(): void {
-    this.show_search_mobile = true;
+    this.showSearchMobile = true;
     this.$nextTick(() => {
       this.$refs.search.focus();
     });
@@ -319,28 +319,28 @@ export default class Results extends Vue {
   /**
    * The filter for charts. Contains all of our filter stuff
    */
-  get all_filter(): Filter {
+  get allFilter(): Filter {
     return {
-      status: this.status_filter || undefined,
-      severity: this.severity_filter || undefined,
-      fromFile: this.file_filter,
-      tree_filters: this.tree_filters,
-      search_term: this.search_term || '',
-      omit_overlayed_controls: true,
-      control_id: this.control_selection || undefined
+      status: this.statusFilter || undefined,
+      severity: this.severityFilter || undefined,
+      fromFile: this.filteFilter,
+      treeFilters: this.treeFilters,
+      searchTerm: this.searchTerm || '',
+      omitOverlayedControls: true,
+      controlId: this.controlSelection || undefined
     };
   }
 
   /**
    * The filter for treemap. Omits its own stuff
    */
-  get treemap_full_filter(): Filter {
+  get treeMapFullFilter(): Filter {
     return {
-      status: this.status_filter || undefined,
-      severity: this.severity_filter || undefined,
-      fromFile: this.file_filter,
-      search_term: this.search_term || '',
-      omit_overlayed_controls: true
+      status: this.statusFilter || undefined,
+      severity: this.severityFilter || undefined,
+      fromFile: this.filteFilter,
+      searchTerm: this.searchTerm || '',
+      omitOverlayedControls: true
     };
   }
 
@@ -348,30 +348,30 @@ export default class Results extends Vue {
    * Clear all filters
    */
   clear() {
-    this.filter_snackbar = false;
-    this.severity_filter = null;
-    this.status_filter = null;
-    this.control_selection = null;
-    this.search_term = '';
-    this.tree_filters = [];
+    this.filterSnackbar = false;
+    this.severityFilter = null;
+    this.statusFilter = null;
+    this.controlSelection = null;
+    this.searchTerm = '';
+    this.treeFilters = [];
   }
 
-  clear_search() {
-    this.search_term = '';
+  clearSearch() {
+    this.searchTerm = '';
   }
 
   /**
    * Returns true if we can currently clear.
    * Essentially, just controls whether the button is available
    */
-  get can_clear(): boolean {
+  get canClear(): boolean {
     // Return if any params not null/empty
     let result: boolean;
     if (
-      this.severity_filter ||
-      this.status_filter ||
-      this.search_term !== '' ||
-      this.tree_filters.length
+      this.severityFilter ||
+      this.statusFilter ||
+      this.searchTerm !== '' ||
+      this.treeFilters.length
     ) {
       result = true;
     } else {
@@ -379,10 +379,10 @@ export default class Results extends Vue {
     }
 
     // Logic to check: are any files actually visible?
-    if (FilteredDataModule.controls(this.all_filter).length === 0) {
-      this.filter_snackbar = true;
+    if (FilteredDataModule.controls(this.allFilter).length === 0) {
+      this.filterSnackbar = true;
     } else {
-      this.filter_snackbar = false;
+      this.filterSnackbar = false;
     }
 
     // Finally, return our result
@@ -392,27 +392,27 @@ export default class Results extends Vue {
   /**
    * The title to override with
    */
-  get curr_title(): string {
-    let returnText = `${capitalize(this.current_route_name.slice(0, -1))} View`;
-    if (this.file_filter.length == 1) {
+  get currTitle(): string {
+    let returnText = `${capitalize(this.currentRouteName.slice(0, -1))} View`;
+    if (this.filteFilter.length == 1) {
       let file = InspecDataModule.allFiles.find(
-        (f) => f.unique_id === this.file_filter[0]
+        (f) => f.unique_id === this.filteFilter[0]
       );
       if (file) {
         returnText += ` (${file.filename} selected)`;
       }
     } else {
-      returnText += ` (${this.file_filter.length} ${this.current_route_name} selected)`;
+      returnText += ` (${this.filteFilter.length} ${this.currentRouteName} selected)`;
     }
     return returnText;
   }
 
-  get current_route_name(): string {
+  get currentRouteName(): string {
     return this.$router.currentRoute.path.substring(1);
   }
 
   //changes width of eval info if it is in server mode and needs more room for tags
-  get info_width(): number {
+  get infoWidth(): number {
     if (ServerModule.serverMode) {
       return 500;
     }
@@ -420,40 +420,40 @@ export default class Results extends Vue {
   }
 
   /** Flat representation of all profiles that ought to be visible  */
-  get visible_profiles(): Readonly<context.ContextualizedProfile[]> {
-    return FilteredDataModule.profiles(this.all_filter.fromFile);
+  get visibleProfiles(): Readonly<context.ContextualizedProfile[]> {
+    return FilteredDataModule.profiles(this.allFilter.fromFile);
   }
 
-  get root_profiles(): context.ContextualizedProfile[] {
+  get rootProfiles(): context.ContextualizedProfile[] {
     // Strip to roots
-    let profiles = this.visible_profiles.filter(
+    let profiles = this.visibleProfiles.filter(
       (p) => p.extended_by.length === 0
     );
     return profiles;
   }
 
   //gets profile ids for the profData component to display corresponding info
-  get prof_ids(): FileID[] {
+  get profIds(): FileID[] {
     let ids = [];
-    for (let prof of this.root_profiles) {
+    for (let prof of this.rootProfiles) {
       if (!isFromProfileFile(prof)) {
         ids.push(
-          (prof.sourced_from as SourcedContextualizedEvaluation).from_file
+          (prof.sourced_from as SourcedContextualizedEvaluation).fromFile
             .unique_id
         );
       } else {
-        ids.push(prof.from_file.unique_id);
+        ids.push(prof.fromFile.unique_id);
       }
     }
     return ids;
   }
 
   //basically a v-model for the eval info cards when there is no slide group
-  toggle_prof(index: number) {
-    if (index == this.eval_info) {
-      this.eval_info = null;
+  toggleProf(index: number) {
+    if (index == this.evalInfo) {
+      this.evalInfo = null;
     } else {
-      this.eval_info = index;
+      this.evalInfo = index;
     }
   }
 }

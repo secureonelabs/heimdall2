@@ -161,15 +161,15 @@ export default class ProfileData extends Vue {
     });
 
     // Deduce filename, start time
-    let from_file: InspecFile;
+    let fromFile: InspecFile;
     let start_time: string | null;
     if (isFromProfileFile(this.selected)) {
-      from_file = this.selected.from_file as ProfileFile;
+      fromFile = this.selected.fromFile as ProfileFile;
       start_time = null;
     } else {
       let exec = (this.selected
         .sourced_from as unknown) as SourcedContextualizedEvaluation;
-      from_file = exec.from_file;
+      fromFile = exec.fromFile;
       let with_time = this.selected.contains.find((x) => x.root.hdf.start_time);
       start_time = (with_time && with_time.root.hdf.start_time) || null;
     }
@@ -177,7 +177,7 @@ export default class ProfileData extends Vue {
     // And put the filename
     output.push({
       label: 'From file',
-      text: from_file.filename
+      text: fromFile.filename
     });
 
     if (start_time) {

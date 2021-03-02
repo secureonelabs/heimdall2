@@ -46,11 +46,11 @@ export type D3TreemapNode = d3.HierarchyNode<TreemapNode>;
  * Actually a one-to-many mapping since we must make a unique leaf for each nist control on each control!
  * @param controls The controls to build into a nist node map
  */
-function controls_to_nist_node_data(
-  contextualized_controls: Readonly<context.ContextualizedControl[]>,
+function controlsToNISTNodeData(
+  contextualizedControls: Readonly<context.ContextualizedControl[]>,
   colors: ColorHack
 ): TreemapNodeLeaf[] {
-  return contextualized_controls.flatMap((cc) => {
+  return contextualizedControls.flatMap((cc) => {
     // Get the status color
     const color = Chroma.hex(colors.colorForStatus(cc.root.hdf.status));
     // Now make leaves for each nist control
@@ -227,7 +227,7 @@ export function build_nist_tree_map(
   data: Readonly<context.ContextualizedControl[]>,
   colors: ColorHack
 ): D3TreemapNode {
-  const leaves = controls_to_nist_node_data(data, colors);
+  const leaves = controlsToNISTNodeData(data, colors);
   const b = build_populated_nist_map(leaves);
   return node_data_to_tree_map(b);
 }

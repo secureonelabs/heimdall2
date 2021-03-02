@@ -9,7 +9,7 @@ import {context} from 'inspecjs';
 export function execution_unique_key(
   exec: Readonly<SourcedContextualizedEvaluation>
 ): string {
-  return `exec_${exec.from_file.unique_id}`;
+  return `exec_${exec.fromFile.unique_id}`;
 }
 
 /**
@@ -20,7 +20,7 @@ export function profile_unique_key(
   profile: Readonly<context.ContextualizedProfile>
 ): string {
   if (isFromProfileFile(profile)) {
-    return `profile_${profile.from_file.unique_id}`;
+    return `profile_${profile.fromFile.unique_id}`;
   } else {
     return `${execution_unique_key(
       profile.sourced_from as SourcedContextualizedEvaluation

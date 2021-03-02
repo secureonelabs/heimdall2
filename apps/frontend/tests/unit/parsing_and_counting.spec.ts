@@ -57,7 +57,7 @@ describe('Parsing', () => {
       const actualWithFilename = {
         filename: file.filename,
         ...StatusCountModule.hash({
-          omit_overlayed_controls: true,
+          omitOverlayedControls: true,
           fromFile: [file.unique_id]
         })
       };

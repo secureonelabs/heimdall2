@@ -14,7 +14,7 @@
     <FileList
       :endpoint="splunk_state"
       @exit-list="handle_logout"
-      @got-files="got_files"
+      @got-files="gotFiles"
       @error="handle_error"
     />
 
@@ -150,7 +150,7 @@ export default class SplunkReader extends Vue {
   }
 
   /** Callback on got files */
-  got_files(files: Array<FileID>) {
+  gotFiles(files: Array<FileID>) {
     this.$emit('got-files', files);
   }
 }

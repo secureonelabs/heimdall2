@@ -20,7 +20,7 @@ import {Prop} from 'vue-property-decorator';
 
 @Component
 export default class EvaluationInfo extends Vue {
-  @Prop({required: true}) readonly file_filter!: FileID;
+  @Prop({required: true}) readonly filteFilter!: FileID;
 
   version: string | null = null;
   platform_name: string | null = null;
@@ -34,7 +34,7 @@ export default class EvaluationInfo extends Vue {
 
   updated() {
     let file = InspecDataModule.allFiles.find(
-      (f) => f.unique_id === this.file_filter
+      (f) => f.unique_id === this.filteFilter
     );
     if (file && file.hasOwnProperty('evaluation')) {
       let eva = file as EvaluationFile;
@@ -67,12 +67,12 @@ export default class EvaluationInfo extends Vue {
 
   //gets file to retrieve corresponding data
   get file(): EvaluationFile {
-    return FilteredDataModule.evaluations([this.file_filter])[0].from_file;
+    return FilteredDataModule.evaluations([this.filteFilter])[0].fromFile;
   }
 
   load_file() {
     let file = InspecDataModule.allFiles.find(
-      (f) => f.unique_id === this.file_filter
+      (f) => f.unique_id === this.filteFilter
     );
     if (file && file.hasOwnProperty('evaluation')) {
       let eva = file as EvaluationFile;

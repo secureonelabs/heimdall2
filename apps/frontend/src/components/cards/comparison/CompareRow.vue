@@ -1,16 +1,16 @@
 <template>
-  <div :watcher="file_num_watch">
+  <div :watcher="fileNumWatch">
     <v-row @click="viewAll">
       <!-- Control ID -->
       <v-col cols="3" xs="3" sm="2" md="1" class="pt-0">
         <div style="text-align: center; padding: 19px">
-          {{ control_id }}
+          {{ controlId }}
         </div>
       </v-col>
 
       <!-- Various Statuses -->
       <v-col
-        v-for="index in shown_files"
+        v-for="index in shownFiles"
         :key="index - 1"
         cols="4"
         xs="4"
@@ -19,9 +19,9 @@
         :value="index - 1"
       >
         <v-btn
-          v-if="hdf_controls[index - 1 + shift] != null"
+          v-if="hdfControls[index - 1 + shift] != null"
           width="100%"
-          :color="`status${hdf_controls[index - 1 + shift].status.replace(
+          :color="`status${hdfControls[index - 1 + shift].status.replace(
             ' ',
             ''
           )}`"
@@ -31,19 +31,19 @@
           @click="view(index - 1 + shift)"
         >
           <template
-            v-if="hdf_controls[index - 1 + shift].status == 'Not Applicable'"
+            v-if="hdfControls[index - 1 + shift].status == 'Not Applicable'"
           >
             Not <br />
             Applicable
           </template>
           <template
-            v-else-if="hdf_controls[index - 1 + shift].status == 'Not Reviewed'"
+            v-else-if="hdfControls[index - 1 + shift].status == 'Not Reviewed'"
           >
             Not <br />
             Reviewed
           </template>
           <template v-else>
-            {{ hdf_controls[index - 1 + shift].status }}
+            {{ hdfControls[index - 1 + shift].status }}
           </template>
         </v-btn>
       </v-col>
@@ -57,7 +57,7 @@
       <v-row>
         <v-col cols="3" xs="3" sm="2" md="1" />
         <v-col
-          v-for="index in shown_files"
+          v-for="index in shownFiles"
           :key="index - 1"
           cols="4"
           xs="4"
@@ -96,7 +96,7 @@ import {Prop} from 'vue-property-decorator';
 export default class CompareRow extends Vue {
   @Prop({type: Array, required: true})
   readonly controls!: context.ContextualizedControl[];
-  @Prop({type: Number, required: true}) readonly shown_files!: number;
+  @Prop({type: Number, required: true}) readonly shownFiles!: number;
   @Prop({type: Number, required: true}) readonly shift!: number;
 
   /** Models the currently selected chips. If it's a number */
@@ -118,8 +118,8 @@ export default class CompareRow extends Vue {
     }
   }
 
-  get control_id(): string {
-    for (let ctrl of this.hdf_controls) {
+  get controlId(): string {
+    for (let ctrl of this.hdfControls) {
       if (ctrl != null) {
         return ctrl.wraps.id;
       }
@@ -141,7 +141,7 @@ export default class CompareRow extends Vue {
   }
 
   /** Just maps controls to hdf. Makes our template a bit less verbose */
-  get hdf_controls(): Array<HDFControl | null> {
+  get hdfControls(): Array<HDFControl | null> {
     return this.controls.map((c) => {
       if (c == null) {
         return null;
@@ -196,9 +196,9 @@ export default class CompareRow extends Vue {
   }
 
   //Updates selection array to match file count
-  get file_num_watch(): string {
-    this.selection = FilteredDataModule.selected_file_ids.map(() => false);
-    return FilteredDataModule.selected_file_ids.length + '';
+  get fileNumWatch(): string {
+    this.selection = FilteredDataModule.selectedFileIds.map(() => false);
+    return FilteredDataModule.selectedFileIds.length + '';
   }
   /** If more than one row selected */
 }

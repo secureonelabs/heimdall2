@@ -49,7 +49,7 @@ export default class FileItem extends mixins(ServerMixin) {
     if (this.file.hasOwnProperty('evaluation')) {
       FilteredDataModule.toggle_evaluation(this.file.unique_id);
     } else if (this.file.hasOwnProperty('profile')) {
-      FilteredDataModule.toggle_profile(this.file.unique_id);
+      FilteredDataModule.toggleProfile(this.file.unique_id);
     }
   }
 
@@ -63,7 +63,7 @@ export default class FileItem extends mixins(ServerMixin) {
 
   //checks if file is selected
   get selected(): boolean {
-    return FilteredDataModule.selected_file_ids.includes(this.file.unique_id);
+    return FilteredDataModule.selectedFileIds.includes(this.file.unique_id);
   }
 
   //removes uploaded file from the currently observed files

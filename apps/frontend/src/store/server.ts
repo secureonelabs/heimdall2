@@ -11,7 +11,7 @@ import {
   VuexModule
 } from 'vuex-module-decorators';
 
-const local_token = new LocalStorageVal<string | null>('auth_token');
+const local_token = new LocalStorageVal<string | null>('authToken');
 const localUserID = new LocalStorageVal<string | null>('localUserID');
 
 export interface IServerState {

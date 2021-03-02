@@ -100,7 +100,7 @@ export default class ControlRowDetails extends mixins(HtmlSanitizeMixin) {
   @Prop({type: Object, required: true})
   readonly control!: context.ContextualizedControl;
 
-  local_tab: string = 'tab-test';
+  localTab: string = 'tab-test';
 
   get cciControlString(): string | null {
     let cci = this.control.hdf.wraps.tags.cci;
@@ -122,13 +122,13 @@ export default class ControlRowDetails extends mixins(HtmlSanitizeMixin) {
   }
 
   tab_change(tab: string) {
-    this.local_tab = tab;
+    this.localTab = tab;
     this.$emit('update:tab', tab);
   }
 
   get actual_tab(): string {
     if (this.tab === null) {
-      return this.local_tab;
+      return this.localTab;
     } else {
       return this.tab;
     }

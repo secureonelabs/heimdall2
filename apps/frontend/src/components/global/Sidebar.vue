@@ -15,17 +15,17 @@
       <DropdownContent
         header-text="Results"
         :files="visible_evaluation_files"
-        :all-selected="all_evaluations_selected"
+        :all-selected="allEvaluationsSelected"
         :enable-compare-view="true"
         :compare-view-active="compareViewActive"
-        @toggle-all="toggle_all_evaluations"
+        @toggle-all="toggleAllEvaluations"
         @toggle-compare-view="compareView"
       />
       <DropdownContent
         header-text="Profiles"
         :files="visible_profile_files"
-        :all-selected="all_profiles_selected"
-        @toggle-all="toggle_all_profiles"
+        :all-selected="allProfilesSelected"
+        @toggle-all="toggleAllProfiles"
       />
     </v-expansion-panels>
   </v-navigation-drawer>
@@ -82,12 +82,12 @@ export default class Sidebar extends mixins(RouteMixin) {
     return files.sort((a, b) => a.filename.localeCompare(b.filename));
   }
 
-  get all_evaluations_selected(): Trinary {
-    return FilteredDataModule.all_evaluations_selected;
+  get allEvaluationsSelected(): Trinary {
+    return FilteredDataModule.allEvaluationsSelected;
   }
 
-  get all_profiles_selected(): Trinary {
-    return FilteredDataModule.all_profiles_selected;
+  get allProfilesSelected(): Trinary {
+    return FilteredDataModule.allProfilesSelected;
   }
 
   get compareViewActive(): boolean {
@@ -95,13 +95,13 @@ export default class Sidebar extends mixins(RouteMixin) {
   }
 
   // toggle the "select all" for profiles
-  toggle_all_profiles(): void {
-    FilteredDataModule.toggle_all_profiles();
+  toggleAllProfiles(): void {
+    FilteredDataModule.toggleAllProfiles();
   }
 
   // toggle the "select all" for evaluations
-  toggle_all_evaluations(): void {
-    FilteredDataModule.toggle_all_evaluations();
+  toggleAllEvaluations(): void {
+    FilteredDataModule.toggleAllEvaluations();
   }
 
   // toggle between the comparison view and the results view

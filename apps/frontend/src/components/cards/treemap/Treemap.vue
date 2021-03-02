@@ -18,7 +18,7 @@
           >
             <!-- The body -->
             <Cell
-              :selected_control_id="selected_control"
+              :selected-control-id="selected_control"
               :node="selected_node"
               :scales="scales"
               :depth="0"

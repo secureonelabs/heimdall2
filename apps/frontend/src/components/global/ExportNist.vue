@@ -44,7 +44,7 @@ export default class ExportNIST extends Vue {
   @Prop({type: Object, required: true}) readonly filter!: Filter;
 
   /** Formats a tag into a well-structured nist string */
-  format_tag(control: NistControl): string | null {
+  formatTag(control: NistControl): string | null {
     // For now just do raw text. Once Mo's nist work is done we can make sure these are well formed
     if (control.raw_text) {
       return control.raw_text.replace(/\s/g, '');
@@ -62,10 +62,10 @@ export default class ExportNIST extends Vue {
   }
 
   /** Makes a sheet for the given file id */
-  sheet_for(file?: FileID): Sheet {
+  sheetFor(file?: FileID): Sheet {
     // If file not provided
     let filename: string = 'All files';
-    let id: FileID[] = FilteredDataModule.selected_file_ids;
+    let id: FileID[] = FilteredDataModule.selectedFileIds;
     if (file) {
       id = [file];
       filename = InspecDataModule.allFiles.find((x) => x.unique_id == file)!
@@ -73,8 +73,8 @@ export default class ExportNIST extends Vue {
     }
 
     // Get our data
-    let base_filter = this.filter;
-    let modified_filter: Filter = {...base_filter, fromFile: id};
+    let baseFilter = this.filter;
+    let modified_filter: Filter = {...baseFilter, fromFile: id};
     let controls = FilteredDataModule.controls(modified_filter);
 
     // Initialize our data structures
@@ -83,33 +83,33 @@ export default class ExportNIST extends Vue {
     ];
 
     // Get them all
-    let nist_controls: NistControl[] = [];
+    let nistControls: NistControl[] = [];
     controls.forEach((c) => {
       let tags = c.root.hdf.parsed_nist_tags;
       tags.forEach((t) => {
         if (
-          !nist_controls.some(
-            (other_tag) => this.format_tag(other_tag) === this.format_tag(t)
+          !nistControls.some(
+            (otherTag) => this.formatTag(otherTag) === this.formatTag(t)
           )
         ) {
-          nist_controls.push(t);
+          nistControls.push(t);
         }
       });
     });
 
     // Sort them
-    nist_controls = nist_controls.sort((a, b) => a.localCompare(b));
+    nistControls = nistControls.sort((a, b) => a.localCompare(b));
 
     // Turn to strings
-    let as_strings_mostly = nist_controls.map((c) => this.format_tag(c));
+    let asStringsMostly = nistControls.map((c) => this.formatTag(c));
 
     // Filter out nulls, bind into rows
-    let as_rows = as_strings_mostly
+    let asRows = asStringsMostly
       .filter((v) => v !== null)
       .map((v) => [v]) as NISTList;
 
     // Append to caat
-    sheet.push(...as_rows);
+    sheet.push(...asRows);
 
     return {
       name: filename.slice(0, MAX_SHEET_NAME_SIZE),
@@ -121,11 +121,11 @@ export default class ExportNIST extends Vue {
     // Get files we plan on exporting
     let files: Array<FileID | undefined> = [
       undefined,
-      ...FilteredDataModule.selected_file_ids
+      ...FilteredDataModule.selectedFileIds
     ];
 
     // Convert to sheets
-    let sheets = files.map((file) => this.sheet_for(file));
+    let sheets = files.map((file) => this.sheetFor(file));
 
     // Handle XLSX exporting
     let wb = XLSX.utils.book_new();
@@ -141,16 +141,16 @@ export default class ExportNIST extends Vue {
     sheets.forEach((sheet) => {
       // Avoid name duplication
       let i = 2;
-      let new_name = sheet.name;
-      while (wb.SheetNames.includes(new_name)) {
+      let newName = sheet.name;
+      while (wb.SheetNames.includes(newName)) {
         let appendage = ` (${i})`;
-        new_name = sheet.name.slice(0, MAX_SHEET_NAME_SIZE - appendage.length);
-        new_name += appendage;
+        newName = sheet.name.slice(0, MAX_SHEET_NAME_SIZE - appendage.length);
+        newName += appendage;
       }
-      wb.SheetNames.push(new_name);
+      wb.SheetNames.push(newName);
 
       let ws = XLSX.utils.aoa_to_sheet(sheet.data);
-      wb.Sheets[new_name] = ws;
+      wb.Sheets[newName] = ws;
     });
 
     let wbout = XLSX.write(wb, {bookType: 'xlsx', type: 'binary'});

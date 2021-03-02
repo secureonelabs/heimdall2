@@ -35,7 +35,7 @@ interface AbsMetaInfo {
   start_time: string;
 
   /** The control ID, repeated for convenience in splunk searches */
-  control_id: string;
+  controlId: string;
 }
 
 /** The meta information for an event with the "evaluation" subtype */

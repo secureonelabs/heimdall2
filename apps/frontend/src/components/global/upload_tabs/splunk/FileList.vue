@@ -100,7 +100,7 @@ export default class FileList extends Vue {
         } as EvaluationFile;
         let contextualized: SourcedContextualizedEvaluation = {
           ...contextualizeEvaluation(exec),
-          from_file: file
+          fromFile: file
         };
         file.evaluation = contextualized;
         Object.freeze(contextualized);

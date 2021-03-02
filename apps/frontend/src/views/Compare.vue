@@ -1,9 +1,9 @@
 <template>
-  <BaseView v-resize="on_resize" :title="curr_title">
+  <BaseView v-resize="on_resize" :title="currTitle">
     <!-- Topbar config - give it a search bar -->
     <template #topbar-content>
       <v-text-field
-        v-model="search_term"
+        v-model="searchTerm"
         flat
         solo
         hide-details
@@ -71,7 +71,7 @@
                               <StatusChart
                                 :filter="{
                                   fromFile: [file.unique_id],
-                                  omit_overlayed_controls: true
+                                  omitOverlayedControls: true
                                 }"
                                 :value="null"
                                 :show_compliance="true"
@@ -155,7 +155,7 @@
                 <v-col cols="4">
                   <v-btn icon small style="float: right">
                     <v-icon
-                      v-if="files.length > num_shown_files"
+                      v-if="files.length > num_shownFiles"
                       :disabled="start_index == 0"
                       @click="scroll_left"
                       >mdi-arrow-left</v-icon
@@ -165,12 +165,12 @@
               </v-row>
             </v-col>
             <ProfileRow
-              v-for="i in num_shown_files"
+              v-for="i in num_shownFiles"
               :key="i - 1 + start_index"
               :name="files[i - 1 + start_index].filename"
               :start_time="fileTimes[i - 1]"
               :index="i + start_index"
-              :show_index="files.length > num_shown_files"
+              :show_index="files.length > num_shownFiles"
             />
             <v-col cols="1">
               <br />
@@ -178,8 +178,8 @@
                 <v-col cols="12">
                   <v-btn icon small>
                     <v-icon
-                      v-if="files.length > num_shown_files"
-                      :disabled="start_index >= files.length - num_shown_files"
+                      v-if="files.length > num_shownFiles"
+                      :disabled="start_index >= files.length - num_shownFiles"
                       @click="scroll_right"
                       >mdi-arrow-right</v-icon
                     >
@@ -193,7 +193,7 @@
             v-for="(control_set, i) in show_sets"
             :key="i"
             :controls="control_set"
-            :shown_files="num_shown_files"
+            :shown-files="num_shownFiles"
             class="my-4"
             :shift="start_index"
             :expanded="expanded_view"
@@ -281,14 +281,14 @@ export default class Compare extends Vue {
   start_index: number = 0;
   ascending: boolean = true;
   chartsOpen: boolean = true;
-  search_term: string = '';
+  searchTerm: string = '';
   ableTab: boolean = true;
   expansion: number = 0;
 
   /** Yields the current two selected reports as an ExecDelta,  */
   get curr_delta(): ComparisonContext {
     let selected_data = FilteredDataModule.evaluations(
-      FilteredDataModule.selected_file_ids
+      FilteredDataModule.selectedFileIds
     );
     return new ComparisonContext(selected_data);
   }
@@ -329,7 +329,7 @@ export default class Compare extends Vue {
   }
 
   get searched_sets(): ControlSeries[] {
-    let term = (this.search_term || '').toLowerCase().trim();
+    let term = (this.searchTerm || '').toLowerCase().trim();
     if (term == '') {
       return this.control_sets;
     }
@@ -356,7 +356,7 @@ export default class Compare extends Vue {
       for (let ctrl of series) {
         if (ctrl == null) {
           continue;
-        } else if (contains_term(ctrl!, this.search_term)) {
+        } else if (contains_term(ctrl!, this.searchTerm)) {
           searched.push(series);
           break;
         }
@@ -405,10 +405,10 @@ export default class Compare extends Vue {
   get files(): EvaluationFile[] {
     let fileArr = [];
     let fileList = FilteredDataModule.evaluations(
-      FilteredDataModule.selected_file_ids
+      FilteredDataModule.selectedFileIds
     );
     for (let i = 0; i < fileList.length; i++) {
-      fileArr.push(fileList[i].from_file);
+      fileArr.push(fileList[i].fromFile);
     }
 
     fileArr = fileArr.sort((a, b) => {
@@ -436,28 +436,28 @@ export default class Compare extends Vue {
         SeverityCountModule.low({
           fromFile: [file.unique_id],
           status: 'Failed',
-          omit_overlayed_controls: true
+          omitOverlayedControls: true
         })
       );
       medCounts.push(
         SeverityCountModule.medium({
           fromFile: [file.unique_id],
           status: 'Failed',
-          omit_overlayed_controls: true
+          omitOverlayedControls: true
         })
       );
       highCounts.push(
         SeverityCountModule.high({
           fromFile: [file.unique_id],
           status: 'Failed',
-          omit_overlayed_controls: true
+          omitOverlayedControls: true
         })
       );
       critCounts.push(
         SeverityCountModule.critical({
           fromFile: [file.unique_id],
           status: 'Failed',
-          omit_overlayed_controls: true
+          omitOverlayedControls: true
         })
       );
     }
@@ -524,7 +524,7 @@ export default class Compare extends Vue {
     return highest_failed;
   }
 
-  get num_shown_files(): number {
+  get num_shownFiles(): number {
     if (this.$vuetify.breakpoint.name == 'xs') {
       if (this.files.length > 2) {
         return 2;
@@ -541,8 +541,8 @@ export default class Compare extends Vue {
   }
 
   on_resize(elt: any) {
-    if (this.start_index > this.files.length - this.num_shown_files) {
-      this.start_index = this.files.length - this.num_shown_files;
+    if (this.start_index > this.files.length - this.num_shownFiles) {
+      this.start_index = this.files.length - this.num_shownFiles;
     }
     if (elt.clientWidth !== undefined && elt.clientWidth > 1) {
       this.width = elt.clientWidth - 24;
@@ -570,23 +570,23 @@ export default class Compare extends Vue {
    * The title to override with
    */
 
-  get curr_title(): string {
+  get currTitle(): string {
     let returnText = 'Comparison View';
-    if (this.file_filter.length == 1) {
+    if (this.filteFilter.length == 1) {
       let file = InspecDataModule.allEvaluationFiles.find(
-        (f) => f.unique_id === this.file_filter[0]
+        (f) => f.unique_id === this.filteFilter[0]
       );
       if (file) {
         returnText += ` (${file.filename} selected)`;
       }
     } else {
-      returnText += ` (${this.file_filter.length} results selected)`;
+      returnText += ` (${this.filteFilter.length} results selected)`;
     }
     return returnText;
   }
 
-  get file_filter(): FileID[] {
-    return FilteredDataModule.selected_evaluations;
+  get filteFilter(): FileID[] {
+    return FilteredDataModule.selectedEvaluations;
   }
 }
 </script>
